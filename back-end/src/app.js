@@ -11,7 +11,7 @@ import cors from 'cors'
 
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS.split(','),
-  // credentials: true
+  credentials: true
 }))
 
 app.use(logger('dev'))
@@ -24,9 +24,6 @@ app.use(cookieParser())
 // Middleware de verificação do token de autorização
 import auth from './middleware/auth.js'
 app.use(auth)
-
-
-/*********** ROTAS DA API **************/
 
 import carsRouter from './routes/cars.js'
 app.use('/cars', carsRouter)
