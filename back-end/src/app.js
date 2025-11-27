@@ -24,6 +24,13 @@ app.use(cookieParser())
 // pode efetuar dentro de um determinado intervalo de tempo
 import { rateLimit } from 'express-rate-limit'
 
+/*
+  Vulnerabilidade: API4:2023 - Consumo irrestrito de recursos.
+  Esta vulnerabilidade foi evitada no código ao fazer a importacao da biblioteca express-rate-limit,
+  que nos possibilita limitar a quantidade de requisicoes que cada user poderá efetuar durante um
+  intervalo de tempo, no nosso caso, 1 minuto, com um limite de 20 requisições. (linhas 36-39).
+*/
+
 
 const limiter = rateLimit({
  windowMs: 60 * 1000,    // Intervalo: 1 minuto

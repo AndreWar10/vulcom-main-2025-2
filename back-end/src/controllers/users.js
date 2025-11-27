@@ -7,6 +7,15 @@ const controller = {}     // Objeto vazio
 controller.create = async function(req, res) {
   try {
 
+    /*
+      Vulnerabilidade: API5:2023 - Falha de autenticação a nível de função.
+
+      Esta vulnerabilidade foi evitada no código ao verificar se o usuário autenticado possui
+      privilégios de administrador (req?.authUser?.is_admin - linha 21) antes de permitir a criação de
+      novos usuários, garantindo que apenas usuários ADMIN possam acessar
+      este recurso, prevenindo acesso não autorizado.
+    */
+
     // Somente usuários administradores podem acessar este recurso
     // HTTP 403: Forbidden(
     if(! req?.authUser?.is_admin) return res.status(403).end()
@@ -172,6 +181,15 @@ controller.login = async function(req, res) {
       // HTTP 401: Unauthorized
       if(! user) return res.status(401).end()
 
+      /*
+        Vulnerabilidade: API2:2023 - Falha de autenticação.
+
+        Esta vulnerabilidade foi evitada no código ao usar a lib bcrypt para hash de senhas, armazenando
+        apenas o hash no banco e não a propria senha de fato. A verificação de senha é feita 
+        através de bcrypt.compare(), que compara o hash da senha fornecida com o hash armazenado, 
+        evitando comprometimento de credenciais.
+      */
+
       // REMOVENDO VULNERABILIDADE DE AUTENTICAÇÃO FIXA
       // if(req.body?.username === 'admin' && req.body?.password === 'admin123') passwordIsValid = true
       // else passwordIsValid = user.password === req.body?.password
@@ -196,6 +214,17 @@ controller.login = async function(req, res) {
         { expiresIn: '24h' }        // Prazo de validade do token
       )
 
+      /*
+        Vulnerabilidade: API8:2023 - Má configuração de segurança.
+        
+        Esta vulnerabilidade foi evitada no código ao configurar o nosso cookie de autenticação com:
+        httpOnly: true (impedindo acesso via JS) 
+        secure: true (garantindo que o cookie só seja enviado em conexões HTTPS)
+        sameSite: 'None' (nao lembro o que faz .. kk)
+        maxAge: 24h (prazo de validade do token), 
+
+        Essas configs trazem maior seguranca e ajudam na prevencao de ataques.
+      */
 
       // Formamos o cookie para enviar ao front-end
       res.cookie(process.env.AUTH_COOKIE_NAME, token, {

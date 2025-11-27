@@ -7,6 +7,13 @@ const controller = {}     // Objeto vazio
 controller.create = async function(req, res) {
   try {
  
+    /*
+      Vulnerabilidade: API3:2023 - Falha de autenticação a nível de propriedade.
+      Esta vulnerabilidade foi evitada no código ao importarmos a biblioteca Zod, e usarmos ela para
+      validar todos os dados recebidos na requisicao antes de de fato os processar, impedindo a atribuicao
+      em massa e garantindo que apenas campos validos e com valores dentro dos limites que estebelecemos 
+      sejam aceitos.
+    */
 
     // Sempre que houver um campo que represente uma data,
     // precisamos garantir sua conversão para o tipo Date
